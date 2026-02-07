@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZ.PATH - Prompt Engineering Experts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #0f1420;
+            --bg-card: rgba(15, 20, 32, 0.8);
+            --cyan: #00E5FF;
+            --mint: #00FFA3;
+            --blue-deep: #1a4d6d;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2c1;
+            --border: rgba(0, 229, 255, 0.2);
+            --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.3);
+            --glow-mint: 0 0 20px rgba(0, 255, 163, 0.3);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.05;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, var(--cyan) 2px, var(--cyan) 3px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, var(--cyan) 2px, var(--cyan) 3px);
+            background-size: 50px 50px;
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* Gradient orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 1;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--cyan);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--mint);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 60px 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--cyan), var(--mint));
+            color: var(--bg-primary);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: var(--cyan);
+        }
+
+        /* Profile Section */
+        .profile {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-image {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            border: 3px solid var(--cyan);
+            box-shadow: var(--glow-cyan), 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            position: relative;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: var(--glow-cyan), 0 8px 32px rgba(0, 0, 0, 0.4); }
+            50% { box-shadow: var(--glow-mint), 0 8px 40px rgba(0, 255, 163, 0.3); }
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--mint));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .profile-bio {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+        }
+
+        /* Links Section */
+        .links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .link-item:nth-child(1) { animation-delay: 0.1s; }
+        .link-item:nth-child(2) { animation-delay: 0.2s; }
+        .link-item:nth-child(3) { animation-delay: 0.3s; }
+        .link-item:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .link-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .link-item:hover::before {
+            left: 100%;
+        }
+
+        .link-item:hover {
+            border-color: var(--cyan);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--glow-cyan), 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .link-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .link-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--cyan), var(--mint));
+            border-radius: 12px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 229, 255, 0.3);
+        }
+
+        .link-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--bg-primary);
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .link-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .link-arrow {
+            width: 20px;
+            height: 20px;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .link-item:hover .link-arrow {
+            opacity: 1;
+            transform: translateX(4px);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 48px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 40px 16px;
+            }
+
+            .profile-name {
+                font-size: 28px;
+            }
+
+            .link-item {
+                padding: 16px 20px;
+            }
+
+            .link-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="pt">🇧🇷 PT</button>
+        <button class="lang-btn" data-lang="en">🇮🇪 EN</button>
+    </div>
+
+    <div class="container">
+        <div class="profile">
+            <div class="profile-image">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300E5FF'/%3E%3Cstop offset='100%25' style='stop-color:%2300FFA3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='%230a0e1a' width='400' height='400'/%3E%3Ctext x='200' y='230' font-family='Orbitron, sans-serif' font-size='120' font-weight='900' fill='url(%23g)' text-anchor='middle'%3EEZ%3C/text%3E%3C/svg%3E" alt="EZ.PATH">
+            </div>
+            <h1 class="profile-name">EZ.PATH</h1>
+            <p class="profile-bio" data-i18n="bio">Especialistas em Prompts</p>
+        </div>
+
+        <div class="links">
+            <a href="https://www.tiktok.com/@ez.path" class="link-item" target="_blank" rel="noopener">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">TikTok</div>
+                    <div class="link-subtitle" data-i18n="tiktok">Siga nosso conteúdo</div>
+                </div>
+                <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+
+            <a href="https://www.instagram.com/ez.path" class="link-item" target="_blank" rel="noopener">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Instagram</div>
+                    <div class="link-subtitle" data-i18n="instagram">Conecte-se conosco</div>
+                </div>
+                <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+
+            <a href="#" class="link-item disabled" id="ebook-link">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">eBook</div>
+                    <div class="link-subtitle" data-i18n="ebook">Em breve disponível</div>
+                </div>
+                <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+
+            <a href="mailto:newsezpath@gmail.com" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Email</div>
+                    <div class="link-subtitle" data-i18n="email">newsezpath@gmail.com</div>
+                </div>
+                <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p data-i18n="footer">© 2026 EZ.PATH - Todos os direitos reservados</p>
+        </div>
+    </div>
+
+    <script>
+        // Translation dictionary
+        const translations = {
+            pt: {
+                bio: 'Especialistas em Prompts',
+                tiktok: 'Siga nosso conteúdo',
+                instagram: 'Conecte-se conosco',
+                ebook: 'Em breve disponível',
+                email: 'newsezpath@gmail.com',
+                footer: '© 2026 EZ.PATH - Todos os direitos reservados'
+            },
+            en: {
+                bio: 'Prompt Engineering Experts',
+                tiktok: 'Follow our content',
+                instagram: 'Connect with us',
+                ebook: 'Coming soon',
+                email: 'newsezpath@gmail.com',
+                footer: '© 2026 EZ.PATH - All rights reserved'
+            }
+        };
+
+        // Detect browser language automatically
+        function detectBrowserLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            // Check if browser is set to Portuguese (pt, pt-BR, pt-PT, etc.)
+            if (browserLang.toLowerCase().startsWith('pt')) {
+                return 'pt';
+            }
+            // Default to English for all other languages
+            return 'en';
+        }
+
+        // Get saved language preference, or auto-detect from browser
+        let currentLang = localStorage.getItem('ezpath-lang') || detectBrowserLanguage();
+
+        // Function to update text
+        function updateLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('ezpath-lang', lang);
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+
+        // Language toggle functionality
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                updateLanguage(btn.dataset.lang);
+            });
+        });
+
+        // Initialize with saved or default language
+        updateLanguage(currentLang);
+
+        // Optional: Add particle effect on hover
+        document.querySelectorAll('.link-item:not(.disabled)').forEach(link => {
+            link.addEventListener('mouseenter', function(e) {
+                this.style.setProperty('--mouse-x', e.clientX + 'px');
+                this.style.setProperty('--mouse-y', e.clientY + 'px');
+            });
+        });
+
+        // INSTRUCTION TO UPDATE EBOOK LINK:
+        // When you have the ebook link, replace this JavaScript:
+        /*
+        const ebookLink = document.getElementById('ebook-link');
+        ebookLink.href = 'YOUR_EBOOK_LINK_HERE';
+        ebookLink.classList.remove('disabled');
+        */
+    </script>
+</body>
+</html>
